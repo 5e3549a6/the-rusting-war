@@ -336,13 +336,13 @@ let v4 = Vec2 { ..v3 };
 
 下面是一个合法的`let`模式:
 
-```
+```rust
 let (left, right) = slice.split_at(middle);
 ```
 
 又比如下面的代码:
 
-```
+```rust
 let v = Vec2 { x: 3.0, y: 6.0 };
 let Vec2 { x, y } = v;
 // `x` is now 3.0, `y` is now `6.0`
@@ -350,14 +350,14 @@ let Vec2 { x, y } = v;
 
 抑或下面的代码:
 
-```
+```rust
 let Vec2 { x, .. } = v;
 // this throws away `v.y`
 ```
 
 `let`模式也可以用在`if`中当条件:
 
-```
+```rust
 struct Number {
     odd: bool,
     value: i32,
@@ -385,7 +385,7 @@ fn print_number(n: Number) {
 
 `match`匹配也是模式，就像`if let`:
 
-```
+```rust
 fn print_number(n: Number) {
     match n {
         Number { odd: true, value } => println!("Odd number: {}", value),
@@ -398,7 +398,7 @@ fn print_number(n: Number) {
 
 注意`match`匹配必须是详尽的，至少需要一个分支与之匹配:
 
-```
+```rust
 fn print_number(n: Number) {
     match n {
         Number { value: 1, .. } => println!("One"),
@@ -411,7 +411,7 @@ fn print_number(n: Number) {
 
 如果你觉得麻烦，可以使用下划线`_`匹配所有的模式:
 
-```
+```rust
 fn print_number(n: Number) {
     match n.value {
         1 => println!("One"),
@@ -423,7 +423,7 @@ fn print_number(n: Number) {
 
 你可以为你的类型声明方法:
 
-```
+```rust
 struct Number {
     odd: bool,
     value: i32,
@@ -438,7 +438,7 @@ impl Number {
 
 可以正常使用它们:
 
-```
+```rust
 fn main() {
     let minus_two = Number {
         odd: false,
@@ -451,7 +451,7 @@ fn main() {
 
 默认变量绑定是不可变的:
 
-```
+```rust
 fn main() {
     let n = Number {
         odd: true,
@@ -464,7 +464,7 @@ fn main() {
 
 不可变的变量不能对其变量值进行修改，但是同时也不能通过赋值更改变量:
 
-```
+```rust
 fn main() {
     let n = Number {
         odd: true,
@@ -479,7 +479,7 @@ fn main() {
 
 `mut`允许变量可以更改:
 
-```
+```rust
 fn main() {
     let mut n = Number {
         odd: true,
@@ -491,7 +491,7 @@ fn main() {
 
 `trait`是多个类型拥有的共同的东西:
 
-```
+```rust
 trait Signed {
     fn is_strictly_negative(self) -> bool;
 }
@@ -507,7 +507,7 @@ trait Signed {
 
 下面的例子是自定义类型实现自定义trait:
 
-```
+```rust
 impl Signed for Number {
     fn is_strictly_negative(self) -> bool {
         self.value < 0
@@ -522,7 +522,7 @@ fn main() {
 
 为外部类型实现自定义trait(甚至是基本类型):
 
-```
+```rust
 impl Signed for i32 {
     fn is_strictly_negative(self) -> bool {
         self < 0
@@ -537,7 +537,7 @@ fn main() {
 
 为自定义类型实现外部trait:
 
-```
+```rust
 // the `Neg` trait is used to overload `-`, the
 // unary minus operator.
 impl std::ops::Neg for Number {
@@ -560,7 +560,7 @@ fn main() {
 
 `impl`总是用来为类型实现方法的，所以在这个块中，`Self`意味着这个类型:
 
-```
+```rust
 impl std::ops::Neg for Number {
     type Output = Self;
 
