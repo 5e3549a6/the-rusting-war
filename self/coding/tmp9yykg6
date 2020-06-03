@@ -1,6 +1,5 @@
 
-pub mod index
-{
+pub mod index{
 
 	pub struct foo;
 	pub struct bar;
@@ -15,13 +14,6 @@ pub mod index
 		}
 	}
 
-	impl foobar for bar{
-		fn how(self)->bool{
-			true
-		}
-	}
-
-
-
+	i
 
 }

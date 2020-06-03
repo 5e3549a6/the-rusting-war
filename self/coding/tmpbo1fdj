@@ -1,0 +1,11 @@
+
+pub mod index{
+
+	pub struct foo;
+	pub struct bar;
+
+	pub trait foobar{
+		pub fn how(self)->no
+	}
+
+}
