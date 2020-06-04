@@ -576,7 +576,7 @@ impl std::ops::Neg for Number {
 有些trait只是一个标记(`marker`)，它并不是指示类型要实现什么方法，而是说这种类型可以用作做特定的事情。
 例如`i32`实现`Copy` trait(简单地讲，`i32`是可复制的)，所以下面的代码工作正常:
 
-```
+```rust
 fn main() {
     let a: i32 = 15;
     let b = a; // `a` is copied
@@ -586,7 +586,7 @@ fn main() {
 
 下面的代码也正常:
 
-```
+```rust
 fn print_i32(x: i32) {
     println!("x = {}", x);
 }
@@ -600,7 +600,7 @@ fn main() {
 
 但是`Number`类型没有实现`Copy`,所以下面的代码不工作:
 
-```
+```rust
 fn main() {
     let n = Number { odd: true, value: 51 };
     let m = n; // `n` is moved into `m`
@@ -610,7 +610,7 @@ fn main() {
 
 下面的代码也不行:
 
-```
+```rust
 fn print_number(n: Number) {
     println!("{} number {}", if n.odd { "odd" } else { "even" }, n.value);
 }
@@ -624,7 +624,7 @@ fn main() {
 
 但是如果`print_number`使用一个不可变的引用就可以:
 
-```
+```rust
 fn print_number(n: &Number) {
     println!("{} number {}", if n.odd { "odd" } else { "even" }, n.value);
 }
@@ -638,7 +638,7 @@ fn main() {
 
 如果变量被声明为可变的，则函数参数使用可变引用也可以工作:
 
-```
+```rust
 fn invert(n: &mut Number) {
     n.value = -n.value;
 }
@@ -658,16 +658,21 @@ fn main() {
 
 Trait方法中的`self`参数可以使用引用，也可以使用不可变引用。
 
-```
+```rust
 impl std::clone::Clone for Number {
     fn clone(&self) -> Self {
         Self { ..*self }
     }
 ```
 
+
+
+-   **self**表示调用方法的对象，作为类方法的第一个参数，类似于C++中的this。
+-   **Self**表示调用者的类型
+
 当调用trait的方法时，`receiver`隐式地被借用:
 
-```
+```rust
 fn main() {
     let n = Number { odd: true, value: 51 };
     let mut m = n.clone();
@@ -680,7 +685,7 @@ fn main() {
 
 前面讲到过，它和下面的代码一样:
 
-```
+```rust
 let m = n.clone();
 
 let m = std::clone::Clone::clone(&n);
@@ -688,7 +693,7 @@ let m = std::clone::Clone::clone(&n);
 
 像`Copy`这样的Marker trait是没有方法的:
 
-```
+```rust
 // note: `Copy` requires that `Clone` is implemented too
 impl std::clone::Clone for Number {
     fn clone(&self) -> Self {
@@ -701,7 +706,7 @@ impl std::marker::Copy for Number {}
 
 现在`Clone`仍然可以使用:
 
-```
+```rust
 fn main() {
     let n = Number { odd: true, value: 51 };
     let m = n.clone();
@@ -711,7 +716,7 @@ fn main() {
 
 但是`Number`值不会被`move`了:
 
-```
+```rust
 fn main() {
     let n = Number { odd: true, value: 51 };
     let m = n; // `m` is a copy of `n`
@@ -721,7 +726,7 @@ fn main() {
 
 一些trait太通用了，我们可以通过`derive`属性自动实现它们:
 
-```
+```rust
 #[derive(Clone, Copy)]
 struct Number {
     odd: bool,
@@ -733,7 +738,7 @@ struct Number {
 
 函数可以是泛型的:
 
-```
+```rust
 fn foobar<T>(arg: T) {
     // do something with `arg`
 }
@@ -741,7 +746,7 @@ fn foobar<T>(arg: T) {
 
 它们可以有多个类型参数，类型参数用在函数声明和函数体中，用来替代具体的类型:
 
-```
+```rust
 fn foobar<L, R>(left: L, right: R) {
     // do something with `left` and `right`
 }
@@ -751,7 +756,7 @@ fn foobar<L, R>(left: L, right: R) {
 
 最简单的约束就是trait名称:
 
-```
+```rust
 fn print<T: Display>(value: T) {
     println!("value = {}", value);
 }
@@ -763,7 +768,7 @@ fn print<T: Debug>(value: T) {
 
 类型约束还可以使用更长的语法:
 
-```
+```rust
 fn print<T>(value: T)
 where
     T: Display,
@@ -774,7 +779,7 @@ where
 
 约束还可以更复杂，比如要求类型要实现多个trait:
 
-```
+```rust
 use std::fmt::Debug;
 
 fn compare<T>(left: T, right: T)
@@ -794,7 +799,7 @@ fn main() {
 
 类似`crate`、`module`和类型，泛型函数可以使用`::`导航:
 
-```
+```rust
 fn main() {
     use std::any::type_name;
     println!("{}", type_name::<i32>()); // prints "i32"
@@ -806,7 +811,7 @@ fn main() {
 
 结构体可以是泛型的:
 
-```
+```rust
 struct Pair<T> {
     a: T,
     b: T,
@@ -826,7 +831,7 @@ fn main() {
 
 标准库中的`Vec`(分配在堆上的数组)就是泛型实现的:
 
-```
+```rust
 fn main() {
     let mut v1 = Vec::new();
     v1.push(1);
@@ -839,7 +844,7 @@ fn main() {
 
 谈到`Vec`,有个宏(`macro`)可以通过字面方式声明`Vec`变量:
 
-```
+```rust
 fn main() {
     let v1 = vec![1, 2, 3];
     let v2 = vec![true, false, true];
@@ -852,7 +857,7 @@ fn main() {
 
 事实上，`println`就是一个宏:
 
-```
+```rust
 fn main() {
     println!("{}", "Hello there!");
 }
@@ -860,7 +865,7 @@ fn main() {
 
 它的展开代码和下面的代码功能一样:
 
-```
+```rust
 fn main() {
     use std::io::{self, Write};
     io::stdout().lock().write_all(b"Hello there!\n").unwrap();
@@ -869,7 +874,7 @@ fn main() {
 
 `panic`也是一个宏，例如`Option`既可以包含某个值，也可以不包含值。如果它不包含值，调用它的`.unwrap()`会panic:
 
-```
+```rust
 fn main() {
     let o1: Option<i32> = Some(128);
     o1.unwrap(); // this is fine
@@ -883,7 +888,7 @@ fn main() {
 
 `Option`并不是一个结构体，而是一个枚举类型(`enum`)，它包含两个值:
 
-```
+```rust
 enum Option<T> {
     None,
     Some(T),
@@ -914,18 +919,31 @@ fn main() {
 
 `Result`也是一个枚举类型。它既可以包含一个正常的，也可以包含一个error:
 
-```
+```rust
 enum Result<T, E> {
     Ok(T),
     Err(E),
 }
+
+/*
+
+impl<T,E> Result {
+    fn unwrap(self)->T,E {
+        match self {
+            Self::Ok(T) => T,
+            Self::Err(E) => E,
+        }
+    }
+}
+
+*/
 ```
 
 如果包含error,调用它的`.unwrap()`也会panic。
 
 变量绑定有`声明周期`:
 
-```
+```rust
 fn main() {
     // `x` doesn't exist yet
     {
@@ -939,7 +957,7 @@ fn main() {
 
 类似地，引用也有声明周期:
 
-```
+```rust
 fn main() {
     // `x` doesn't exist yet
     {
@@ -955,7 +973,7 @@ fn main() {
 
 引用的声明周期不能超过它借用的变量的声明周期:
 
-```
+```rust
 fn main() {
     let x_ref = {
         let x = 42;
@@ -968,7 +986,7 @@ fn main() {
 
 一个变量可以不可变地借用多次:
 
-```
+```rust
 fn main() {
     let x = 42;
     let x_ref1 = &x;
@@ -980,7 +998,7 @@ fn main() {
 
 在借用的时候，变量不能被修改:
 
-```
+```rust
 fn main() {
     let mut x = 42;
     let x_ref = &x;
@@ -992,7 +1010,7 @@ fn main() {
 
 当不可变地借用时，不能同时可变地的借用:
 
-```
+```rust
 fn main() {
     let mut x = 42;
     let x_ref1 = &x;
@@ -1004,7 +1022,7 @@ fn main() {
 
 函数参数中的引用也有生命周期:
 
-```
+```rust
 fn print(x: &i32) {
     // `x` is borrowed (from the outside) for the
     // entire time this function is called.
@@ -1018,7 +1036,7 @@ fn print(x: &i32) {
 
 生命周期的名称以`'`开始:
 
-```
+```rust
 // elided (non-named) lifetimes:
 fn print(x: &i32) {}
 
@@ -1028,7 +1046,7 @@ fn print<'a>(x: &'a i32) {}
 
 返回引用的声明周期依赖参数的声明周期:
 
-```
+```rust
 struct Number {
     value: i32,
 }
@@ -1047,7 +1065,7 @@ fn main() {
 
 当只有一个生命周期时，它并需要被命名，所有对象都有同样的声明周期，所以下面两个函数是等价的:
 
-```
+```rust
 fn number_value<'a>(num: &'a Number) -> &'a i32 {
     &num.value
 }
@@ -1059,7 +1077,7 @@ fn number_value(num: &Number) -> &i32 {
 
 结构体也可以通过生命周期声明为泛型，这允许它们持有引用:
 
-```
+```rust
 struct NumRef<'a> {
     x: &'a i32,
 }
@@ -1073,7 +1091,7 @@ fn main() {
 
 同样的代码，增加一个函数:
 
-```
+```rust
 struct NumRef<'a> {
     x: &'a i32,
 }
@@ -1091,7 +1109,7 @@ fn main() {
 
 同样的代码，使用省略的(`elided`)的生命周期:
 
-```
+```rust
 struct NumRef<'a> {
     x: &'a i32,
 }
@@ -1109,7 +1127,7 @@ fn main() {
 
 `impl`块也可以使用声明周期实现泛型:
 
-```
+```rust
 impl<'a> NumRef<'a> {
     fn as_i32_ref(&'a self) -> &'a i32 {
         self.x
@@ -1126,7 +1144,7 @@ fn main() {
 
 但是你同样可以使用省略的方式:
 
-```
+```rust
 impl<'a> NumRef<'a> {
     fn as_i32_ref(&self) -> &i32 {
         self.x
@@ -1136,7 +1154,7 @@ impl<'a> NumRef<'a> {
 
 如果你不需要使用声明周期的名字，你甚至可以省略更多:
 
-```
+```rust
 impl NumRef<'_> {
     fn as_i32_ref(&self) -> &i32 {
         self.x
@@ -1148,7 +1166,7 @@ impl NumRef<'_> {
 
 字符串字面值就是`'static`:
 
-```
+```rust
 struct Person {
     name: &'static str,
 }
@@ -1162,7 +1180,7 @@ fn main() {
 
 但是`owned string`声明周期就不是`'static`的:
 
-```
+```rust
 struct Person {
     name: &'static str,
 }
@@ -1180,7 +1198,7 @@ fn main() {
 
 **A)** 通过声明周期声明泛型
 
-```
+```rust
 struct Person<'a> {
     name: &'a str,
 }
@@ -1196,7 +1214,7 @@ fn main() {
 
 **B)** 获得这个字符串的所有权
 
-```
+```rust
 struct Person {
     name: String,
 }
@@ -1210,13 +1228,13 @@ fn main() {
 
 在一个结构体的字面值中，如果字段名和变量相同时:
 
-```
+```rust
 let p = Person { name: name };
 ```
 
 可以简写为:
 
-```
+```rust
 let p = Person { name };
 ```
 
