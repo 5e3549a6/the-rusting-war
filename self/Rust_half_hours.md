@@ -1247,7 +1247,7 @@ Rust中很多类型都有`owned`和非`owned`变种:
 Rust有slice - 它们是对多个连续元素的引用。
 你可以借用vector的slice，例如:
 
-```
+```rust
 fn main() {
     let v = vec![1, 2, 3, 4, 5];
     let v2 = &v[2..4];
@@ -1262,7 +1262,7 @@ fn main() {
 `..`是range表示方法。 Range是标准库定义的一组结构体。
 前后的索引值可以省略，默认右边的值是不包含的， 如果要包含右边的值，使用`=`，:
 
-```
+```rust
 fn main() {
     // 0 or greater
     println!("{:?}", (0..).contains(&100)); // true
@@ -1277,7 +1277,7 @@ fn main() {
 
 借用规则同样应用于slice:
 
-```
+```rust
 fn tail(s: &[u8]) -> &[u8] {
   &s[1..] 
 }
@@ -1291,7 +1291,7 @@ fn main() {
 
 与下面的代码相同:
 
-```
+```rust
 fn tail<'a>(s: &'a [u8]) -> &'a [u8] {
   &s[1..] 
 }
@@ -1299,7 +1299,7 @@ fn tail<'a>(s: &'a [u8]) -> &'a [u8] {
 
 下面的代码是合法的:
 
-```
+```rust
 fn main() {
     let y = {
         let x = &[1, 2, 3, 4, 5];
@@ -1311,7 +1311,7 @@ fn main() {
 
 只不过是因为`[1, 2, 3, 4, 5]`是`'static`。下面的代码就不合法:
 
-```
+```rust
 fn main() {
     let y = {
         let v = vec![1, 2, 3, 4, 5];
@@ -1326,7 +1326,7 @@ fn main() {
 
 `&str`实际上是slice:
 
-```
+```rust
 fn file_ext(name: &str) -> Option<&str> {
     // this does not create a new string - it returns
     // a slice of the argument.
@@ -1345,7 +1345,7 @@ fn main() {
 
 借用规则同样适用:
 
-```
+```rust
 fn main() {
     let ext = {
         let name = String::from("Read me. Or don't.txt");
@@ -1358,7 +1358,7 @@ fn main() {
 
 返回失败的函数典型地返回`Result`:
 
-```
+```rust
 fn main() {
     let s = std::str::from_utf8(&[240, 159, 141, 137]);
     println!("{:?}", s);
@@ -1372,7 +1372,7 @@ fn main() {
 
 如果处理失败的时候想panic,你可以调用`.unwrap()`:
 
-```
+```rust
 fn main() {
     let s = std::str::from_utf8(&[240, 159, 141, 137]).unwrap();
     println!("{:?}", s);
@@ -1387,7 +1387,7 @@ fn main() {
 
 或者调用`.expect()` panic一个定制的信息:
 
-```
+```rust
 fn main() {
     let s = std::str::from_utf8(&[195, 40]).expect("valid utf-8");
     // prints: thread 'main' panicked at 'valid utf-8: Utf8Error
@@ -1397,7 +1397,7 @@ fn main() {
 
 抑或使用`match`:
 
-```
+```rust
 fn main() {
     match std::str::from_utf8(&[240, 159, 141, 137]) {
         Ok(s) => println!("{}", s),
@@ -1409,7 +1409,7 @@ fn main() {
 
 甚至使用`if let`:
 
-```
+```rust
 fn main() {
     if let Ok(s) = std::str::from_utf8(&[240, 159, 141, 137]) {
         println!("{}", s);
@@ -1420,7 +1420,7 @@ fn main() {
 
 再不济给上层抛出错误:
 
-```
+```rust
 fn main() -> Result<(), std::str::Utf8Error> {
     match std::str::from_utf8(&[240, 159, 141, 137]) {
         Ok(s) => println!("{}", s),
@@ -1432,7 +1432,7 @@ fn main() -> Result<(), std::str::Utf8Error> {
 
 常用的简洁方式是使用`?`:
 
-```
+```rust
 fn main() -> Result<(), std::str::Utf8Error> {
     let s = std::str::from_utf8(&[240, 159, 141, 137])?;
     println!("{}", s);
@@ -1442,7 +1442,7 @@ fn main() -> Result<(), std::str::Utf8Error> {
 
 `*`符号常用来解引用，但是你不需要专门访问字段或者调用方法:
 
-```
+```rust
 struct Point {
     x: f64,
     y: f64,
@@ -1459,7 +1459,7 @@ fn main() {
 
 如果类型是可复制的(实现`Copy`),那么你可以:
 
-```
+```rust
 struct Point {
     x: f64,
     y: f64,
